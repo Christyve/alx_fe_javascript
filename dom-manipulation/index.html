@@ -6,82 +6,46 @@
   <title>Dynamic Quote Generator</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f9f9;
+      font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 600px;
-      margin: auto;
-    }
-    h1 {
-      color: #333;
-      text-align: center;
+      background: #f9f9f9;
     }
     #quoteDisplay {
-      font-size: 1.3rem;
+      font-size: 1.5em;
       margin: 20px 0;
-      padding: 20px;
-      background: #fff;
-      border-left: 5px solid #4caf50;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    select, input[type="text"], button {
       padding: 10px;
-      font-size: 1rem;
+      background: #fff;
+      border-left: 4px solid #007acc;
+    }
+    select, input, button {
       margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
+      padding: 10px;
+      font-size: 1em;
     }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .section {
-      background: #ffffff;
-      padding: 15px;
-      margin-top: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    }
-    label {
-      font-weight: bold;
-    }
-    input[type="file"] {
-      padding: 10px 0;
+    .input-section {
+      margin: 20px 0;
     }
   </style>
 </head>
 <body>
-
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Category Filter -->
-  <div class="section">
-    <label for="categoryFilter">Filter by Category:</label>
-    <select id="categoryFilter" onchange="filterQuotes()">
-      <!-- Dynamically populated options -->
-    </select>
-  </div>
+  <label for="categoryFilter">Filter by Category:</label>
+  <select id="categoryFilter" onchange="filterQuotes()"></select>
 
-  <!-- Quote Display -->
   <div id="quoteDisplay">Loading quote...</div>
 
-  <!-- Add Quote Form -->
-  <div class="section">
+  <div class="input-section">
     <h2>Add a New Quote</h2>
-    <div class="form-group">
-      <label for="newQuoteText">Quote:</label>
-      <input type="text" id="newQuoteText" placeholder="Enter quote text" />
-    </div>
-    <div class="form-group">
-      <label for="newQuoteCategory">Category:</label>
-      <input type="text" id="newQuoteCategory" placeholder="Enter category" />
-    </div>
+    <input type="text" id="newQuoteText" placeholder="Enter quote text" size="40"/>
+    <input type="text" id="newQuoteCategory" placeholder="Enter category" size="20"/>
     <button onclick="addQuote()">Add Quote</button>
   </div>
 
-  <!-- Export & Import -->
-  <div class="section">
-    <h2>Export / Import Quotes</h2>
-    <button onclick="exportToJsonFile()">Export to JSON</button>
-    <input type="file" accept=".json" onchange="importFromJsonFile(event)" />
+  <div class="input-section">
+    <h2>Import/Export</h2>
+    <input type="file" accept=".json" onchange="importFromJsonFile(event)"/>
+    <button onclick="exportToJsonFile()">Export Quotes</button>
   </div>
 
   <script src="script.js"></script>
