@@ -47,6 +47,7 @@ function addQuote() {
   quotes.push(newQuote);
   saveQuotes();
   populateCategories();
+  postQuoteToServer(newQuote); // Send to mock API
   alert("Quote added successfully!");
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
@@ -88,7 +89,27 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-// ✅ NEW: Fetch quotes from mock server
+// ✅ POST to Mock Server
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quote)
+    });
+
+    if (!response.ok) throw new Error("Failed to post quote to server");
+    const result = await response.json();
+    console.log("Quote posted to server:", result);
+  } catch (error) {
+    console.error("Error posting quote:", error);
+    notifyUser("Failed to sync new quote to server.");
+  }
+}
+
+// ✅ GET from Mock Server
 async function fetchQuotesFromServer() {
   const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
   const serverData = await response.json();
@@ -99,7 +120,7 @@ async function fetchQuotesFromServer() {
   }));
 }
 
-// ✅ UPDATED: Sync with server using fetchQuotesFromServer
+// ✅ Sync and Conflict Resolution
 async function syncWithServer() {
   try {
     const serverQuotes = await fetchQuotesFromServer();
@@ -110,7 +131,7 @@ async function syncWithServer() {
       if (localIndex !== -1) {
         const localQuote = quotes[localIndex];
         if (localQuote.text !== serverQuote.text || localQuote.category !== serverQuote.category) {
-          quotes[localIndex] = serverQuote; // server wins
+          quotes[localIndex] = serverQuote;
           conflictCount++;
         }
       } else {
@@ -128,6 +149,7 @@ async function syncWithServer() {
     }
   } catch (err) {
     console.error("Sync failed:", err);
+    notifyUser("Sync with server failed.");
   }
 }
 
