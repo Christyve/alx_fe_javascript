@@ -8,8 +8,22 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <div id="quoteDisplay" style="margin: 20px 0; font-size: 1.2em; font-style: italic;"></div>
+  <!-- Category Selector -->
+  <label for="categorySelect">Choose a category:</label>
+  <select id="categorySelect">
+    <option value="all">All</option>
+  </select>
+
+  <!-- Quote Display -->
+  <div id="quoteDisplay" style="margin: 20px 0;"></div>
   <button id="newQuote">Show New Quote</button>
+
+  <!-- Add Quote Form -->
+  <div style="margin-top: 30px;">
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <button onclick="addQuote()">Add Quote</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
