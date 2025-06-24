@@ -259,3 +259,31 @@ function init() {
 // Event Listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
 window.addEventListener("DOMContentLoaded", init);
+
+// Sync local quotes with server and resolve conflicts
+async function syncQuotes() {
+  notifyUser("Syncing quotes with server...");
+
+  try {
+    // Step 1: Fetch server quotes
+    const response = await fetch(SERVER_URL);
+    const serverData = await response.json();
+
+    const serverQuotes = serverData.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    // Step 2: Merge server quotes into local quotes
+    const mergedQuotes = mergeQuotes(serverQuotes);
+    quotes = mergedQuotes;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+
+    notifyUser("Sync completed successfully.");
+  } catch (error) {
+    notifyUser("Sync failed. Check network connection.");
+    console.error("syncQuotes error:", error);
+  }
+}
