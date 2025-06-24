@@ -68,6 +68,71 @@ function init() {
   showRandomQuote();
 }
 
+
+// Export quotes to JSON
+function exportToJson() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+// Import quotes from JSON
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        alert("Quotes imported successfully!");
+        initCategoryOptions();
+      } else {
+        alert("Invalid JSON format.");
+      }
+    } catch (error) {
+      alert("Failed to import quotes: " + error.message);
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+// Initialize category dropdown
+function initCategoryOptions() {
+  // Clear and reset dropdown
+  categorySelect.innerHTML = `<option value="all">All</option>`;
+  const categories = [...new Set(quotes.map(q => q.category))];
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    categorySelect.appendChild(option);
+  });
+}
+
+// Load last viewed quote (optional)
+function loadLastViewedQuote() {
+  const lastQuote = sessionStorage.getItem("lastQuote");
+  if (lastQuote) {
+    const quote = JSON.parse(lastQuote);
+    quoteDisplay.innerHTML = `<blockquote>"${quote.text}"</blockquote><small>- ${quote.category}</small>`;
+  }
+}
+
+// Initialization
+function init() {
+  loadQuotes();
+  initCategoryOptions();
+  loadLastViewedQuote();
+}
+
 // Event Listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
 window.addEventListener("DOMContentLoaded", init);
