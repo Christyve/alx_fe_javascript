@@ -10,6 +10,7 @@ const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 const categorySelect = document.getElementById("categorySelect");
 
+
 // Display a random quote
 function showRandomQuote() {
   const selectedCategory = categorySelect.value;
