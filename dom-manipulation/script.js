@@ -54,6 +54,10 @@ function createAddQuoteForm() {
   alert("New quote added!");
 }
 
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
 // Initial setup
 function init() {
   // Populate category dropdown
