@@ -1,3 +1,18 @@
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem("quotes");
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+  } else {
+    // Default quotes if none saved
+    quotes = [
+      { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
+      { text: "Life is what happens when you're busy making other plans.", category: "Life" },
+      { text: "Don't cry because it's over, smile because it happened.", category: "Inspiration" }
+    ];
+    saveQuotes(); // Save the default to localStorage
+  }
+}
+
 // Initial Quotes
 let quotes = [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
@@ -57,6 +72,7 @@ function createAddQuoteForm() {
 function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
+
 
 // Initial setup
 function init() {
