@@ -109,6 +109,63 @@ function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
+function notifyUser(message) {
+  const notification = document.getElementById("notification");
+  notification.textContent = message;
+  setTimeout(() => {
+    notification.textContent = "";
+  }, 5000);
+}
+
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Mock endpoint
+
+// Simulate fetching quotes from server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverData = await response.json();
+
+    // Simulate quote format: { text, category }
+    const serverQuotes = serverData.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    // Conflict resolution: Server data takes precedence
+    const mergedQuotes = mergeQuotes(serverQuotes);
+    quotes = mergedQuotes;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+    notifyUser("Quotes synced from server.");
+  } catch (error) {
+    console.error("Failed to fetch server quotes:", error);
+  }
+}
+
+async function syncQuotesToServer() {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quotes)
+    });
+
+    if (response.ok) {
+      notifyUser("Local quotes synced to server successfully.");
+    }
+  } catch (error) {
+    console.error("Failed to sync quotes to server:", error);
+  }
+}
+
+function mergeQuotes(serverQuotes) {
+  const existingTexts = new Set(quotes.map(q => q.text));
+  const newQuotes = serverQuotes.filter(q => !existingTexts.has(q.text));
+  return [...quotes, ...newQuotes];
+}
 
 // Initial setup
 function init() {
@@ -196,6 +253,7 @@ function init() {
   initCategoryOptions();
   populateCategories();
   loadLastViewedQuote();
+  setInterval(fetchQuotesFromServer, 30000); // Check every 30s
 }
 
 // Event Listeners
