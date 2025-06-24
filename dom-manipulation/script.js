@@ -25,6 +25,40 @@ const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 const categorySelect = document.getElementById("categorySelect");
 
+function populateCategories() {
+  const categoryFilter = document.getElementById("categoryFilter");
+
+  // Reset filter dropdown
+  categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+
+  const categories = [...new Set(quotes.map(q => q.category))];
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    categoryFilter.appendChild(option);
+  }
+}
+
+function filterQuotes() {
+  const selected = document.getElementById("categoryFilter").value;
+  localStorage.setItem("selectedCategory", selected);
+
+  const filteredQuotes = selected === "all"
+    ? quotes
+    : quotes.filter(q => q.category === selected);
+
+  if (filteredQuotes.length === 0) {
+    quoteDisplay.innerHTML = "<em>No quotes in this category.</em>";
+    return;
+  }
+
+  const randomQuote = filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
+  quoteDisplay.innerHTML = `<blockquote>"${randomQuote.text}"</blockquote><small>- ${randomQuote.category}</small>`;
+
+  // Save last viewed quote in session
+  sessionStorage.setItem("lastQuote", JSON.stringify(randomQuote));
+}
 
 // Display a random quote
 function showRandomQuote() {
@@ -54,6 +88,8 @@ function createAddQuoteForm() {
 
   const newQuote = { text: quoteText, category: quoteCategory };
   quotes.push(newQuote);
+
+  populateCategories(); // Refresh category dropdowns
 
   // Add category to dropdown if new
   if (![...categorySelect.options].some(opt => opt.value.toLowerCase() === quoteCategory.toLowerCase())) {
@@ -146,10 +182,19 @@ function loadLastViewedQuote() {
   }
 }
 
+function loadLastSelectedCategory() {
+  const lastSelected = localStorage.getItem("selectedCategory");
+  if (lastSelected) {
+    document.getElementById("categoryFilter").value = lastSelected;
+    filterQuotes(); // Show filtered quote on load
+  }
+}
+
 // Initialization
 function init() {
   loadQuotes();
   initCategoryOptions();
+  populateCategories();
   loadLastViewedQuote();
 }
 
