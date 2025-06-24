@@ -260,6 +260,37 @@ function init() {
 newQuoteBtn.addEventListener("click", showRandomQuote);
 window.addEventListener("DOMContentLoaded", init);
 
+function notifyUser(message) {
+  const notification = document.getElementById("notification");
+  notification.textContent = message;
+  setTimeout(() => {
+    notification.textContent = "";
+  }, 5000);
+}
+
+async function syncQuotes() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverData = await response.json();
+
+    const serverQuotes = serverData.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    const mergedQuotes = mergeQuotes(serverQuotes);
+    quotes = mergedQuotes;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+
+    notifyUser("Quotes synced with server!"); // ✅ Add this line
+  } catch (error) {
+    notifyUser("Failed to sync quotes.");
+    console.error("syncQuotes error:", error);
+  }
+}
+
 // Sync local quotes with server and resolve conflicts
 async function syncQuotes() {
   notifyUser("Syncing quotes with server...");
